@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".views.ui.home.HomeFragment">
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_marginEnd="@dimen/defaultMargin">
+
+        <EditText
+            android:id="@+id/senderChannelId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/sender_channel_id"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_marginEnd="@dimen/defaultMargin">
+
+        <EditText
+            android:id="@+id/receiverChannelId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/receiver_channel_id"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:visibility="gone"
+        android:layout_marginEnd="@dimen/defaultMargin">
+
+        <EditText
+            android:id="@+id/receiverChannelApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:hint="@string/receiver_channel_api_key"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:visibility="gone"
+        android:layout_marginEnd="@dimen/defaultMargin">
+
+        <EditText
+            android:id="@+id/receiverChannelChatId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/receiver_channel_chat_id"
+            android:importantForAutofill="no"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_marginEnd="@dimen/defaultMargin"
+        android:text="@string/submit"
+        android:id="@+id/submitBtn"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_marginEnd="@dimen/defaultMargin"
+        android:text="@string/open"
+        android:id="@+id/openChannel"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/resultTV"
+        android:layout_marginStart="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_marginEnd="@dimen/defaultMargin"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
