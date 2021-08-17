@@ -20,16 +20,21 @@ class HomeRepository @Inject constructor(private val mContext: Context, api: Hom
     BaseRepository() {
 
     suspend fun savePosterData(
-        senderChannelId: String,
-        receiverChannelId: String,
+        copy_links_only: Boolean,
+        receiverChannelName: String,
         receiverChannelApiKey: String,
         receiverChannelChatId: String
     ) = withContext(IO) {
 
         val poster =
-            Poster(senderChannelId, receiverChannelId, receiverChannelApiKey, receiverChannelChatId)
+            Poster(copy_links_only, receiverChannelName, receiverChannelApiKey, receiverChannelChatId)
 
         UserPreferences.setPosterData(mContext, poster)
+    }
+
+    suspend fun saveCopyLinksOnly(copy_links_only:Boolean) =  withContext(IO){
+
+        UserPreferences.saveCopyLinksOnly(mContext, copy_links_only)
     }
 
 }

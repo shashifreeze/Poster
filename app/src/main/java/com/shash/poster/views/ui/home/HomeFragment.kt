@@ -30,7 +30,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val viewModel by viewModels<HomeViewModel>()
 
-    private lateinit var receiverChannelId:String
+    private lateinit var receiverChannelId: String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,7 +53,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             requireContext().showAlertDialog(
                 title = "Notification Permission needed",
                 message = "Please allow notification permission",
-                posBtnText= "Settings",
+                posBtnText = "Settings",
                 showNegBtn = false,
                 callback = {
                     requireContext().openNotificationPermissionSettings()
@@ -71,10 +71,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun showData(it: Poster) {
-        receiverChannelId = it.receiver_channel_id
+        receiverChannelId = it.receiver_channel_name
         val data =
-            "Saved Data:\nSender Channel id = ${it.sender_channel_id}\nReceiver Channel Id = ${it.receiver_channel_id}\nReceiver Channel api key = ${it.receiver_channel_api_key}\nReceiver Channel Chat id = ${it.receiver_channel_chat_id}"
+            "Saved Data:\nCopy links only = ${it.copy_links_only}\nReceiver Channel Name = ${it.receiver_channel_name}\nReceiver Channel api key = ${it.receiver_channel_api_key}\nReceiver Channel Chat id = ${it.receiver_channel_chat_id}"
         binding.resultTV.text = data
+        binding.copyLinksOnly.isChecked = it.copy_links_only
     }
 
     private fun clickListeners() {
@@ -85,6 +86,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         binding.openChannel.setOnClickListener {
             openChannel()
+        }
+
+        binding.copyLinksOnly.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.saveCopyLinksOnly(isChecked)
         }
     }
 
@@ -105,27 +110,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun validateAndSave() {
         binding.apply {
-//            if (senderChannelId.validateEmpty("senderChannelId")) {
-//                return
-//            }
 
-            if (receiverChannelId.validateEmpty("receiverChannelId")) {
+            if (receiverChannelName.validateEmpty("receiverChannelId")) {
                 return
             }
 
-//            if (receiverChannelApiKey.validateEmpty("receiverChannelApiKey")) {
-//                return
-//            }
-//            if (receiverChannelChatId.validateEmpty("receiverChannelChatId")) {
-//                return
-//            }
-
             //all validation passed
             viewModel.savePosterData(
-                senderChannelId.text.toString(),
-                receiverChannelId.text.toString(),
-                receiverChannelApiKey.text.toString(),
-                receiverChannelChatId.text.toString()
+                copyLinksOnly.isChecked,
+                receiverChannelName.text.toString(),
+                "",
+                ""
             )
         }
     }

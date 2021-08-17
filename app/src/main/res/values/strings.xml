@@ -2,8 +2,8 @@
     <string name="app_name">Poster</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Poster</string>
+    <string name="nav_header_subtitle">Copies messages from telegram channels</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -11,7 +11,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="sender_channel_id">Sender Channel Id</string>
-    <string name="receiver_channel_id">Receiver Channel Id</string>
+    <string name="receiver_channel_name">Receiver Channel Name</string>
     <string name="receiver_channel_api_key">Receiver Channel Api Key</string>
     <string name="receiver_channel_chat_id">Receiver Channel Chat Id</string>
     <string name="submit">Submit</string>
@@ -26,4 +26,6 @@
     <string name="open">Open Channel</string>
     <string name="description">send sms to telegram</string>
     <string name="telegram_package">org.telegram.messenger</string>
+    <string name="restart">Restart</string>
+    <string name="copy_links_only">Copy links only</string>
 </resources>

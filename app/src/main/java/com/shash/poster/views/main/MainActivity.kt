@@ -9,14 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.shash.poster.R
 import com.shash.poster.databinding.ActivityMainBinding
+import com.shash.poster.utils.extensions.openNotificationPermissionSettings
+import com.shash.poster.utils.extensions.showAlertDialog
 import com.shash.poster.utils.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,8 +42,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun uiSetup() {
         binding.appBarMain.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            showAlertDialog(
+                title = "Notification Permission needed",
+                message = "Please allow notification permission",
+                posBtnText= "Settings",
+                showNegBtn = false,
+                callback = {
+                    openNotificationPermissionSettings()
+                })
         }
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -60,6 +65,29 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        binding.navView.setNavigationItemSelectedListener { dest ->
+
+            when (dest.itemId) {
+                R.id.nav_restart -> {
+                    showAlertDialog(
+                        title = "Notification Permission needed",
+                        message = "Please allow notification permission",
+                        posBtnText= "Settings",
+                        showNegBtn = false,
+                        callback = {
+                            openNotificationPermissionSettings()
+                        })
+                }
+                else -> {
+                    NavigationUI.onNavDestinationSelected(dest, navController)
+                }
+            }
+            //close drawer
+            binding.drawerLayout.closeDrawers()
+
+            true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
