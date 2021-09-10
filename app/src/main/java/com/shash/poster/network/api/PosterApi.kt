@@ -2,27 +2,23 @@ package com.shash.poster.network.api
 
 import com.shash.poster.utils.EndPoints
 import okhttp3.ResponseBody
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 /**
  * Interface for Home page calls
  */
 interface PosterApi {
-
+    //1947779589:AAEbhJVuyGH7fqehcI807Fk_ftCeHz_Awn0/sendMessage?chat_id=@Dealsofferwala&text=Testing
     /**
      * @param: ShopMasterID
      * @return: ProductListResponse
      * @author: Shashi
      * Get shop's featured product
      * */
-    @FormUrlEncoded
-    @POST(EndPoints.GET_SHOP_LIST_BY_CAT)
+    @GET("sendMessage")
     suspend fun postMessage(
-        @Field("message") catId: Int,
-        @Field("lat") lat: Double,
-        @Field("lng") lng: Double
+        @Query("chat_id") chatId: String,
+        @Query("text") message: String
     ): ResponseBody
 
 }

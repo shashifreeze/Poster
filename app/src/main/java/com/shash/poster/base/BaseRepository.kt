@@ -52,10 +52,10 @@ abstract class BaseRepository {
             } catch (throwable: Throwable) {
                 when (throwable) {
                     is IOException -> {
-                        Resource.Failure(true, null, null)
+                        Resource.Failure(true, null,message = throwable.message,errorBody =  null)
                     }
                     else -> {
-                        Resource.Failure(false, null, null)
+                        Resource.Failure(false, null, message = throwable.message,errorBody = null)
                     }
                 }
             }

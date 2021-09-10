@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class RemoteDataSource {
 
     companion object {
-        private val BASE_URL = "https://nextnearby.com/api/"
+        private const val BASE_URL = "https://api.telegram.org/bot1947779589:AAEbhJVuyGH7fqehcI807Fk_ftCeHz_Awn0/"
     }
 
     /**@param :  (api:Class<Api>,authToken:String? =null)

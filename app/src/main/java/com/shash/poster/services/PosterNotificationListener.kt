@@ -1,8 +1,6 @@
 package com.shash.poster.services
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
@@ -12,15 +10,18 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.shash.poster.R
-import com.shash.poster.application.App
 import com.shash.poster.application.App.Companion.CHANNEL_1_ID
 import com.shash.poster.data.Poster
+import com.shash.poster.network.Resource
 import com.shash.poster.preferences.UserPreferences
+import com.shash.poster.utils.createNotificationChannels
 import com.shash.poster.utils.extensions.copyToClipboard
+import com.shash.poster.utils.extensions.extractUrls
 import com.shash.poster.views.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import org.jsoup.Jsoup
 import javax.inject.Inject
 
 /**
@@ -45,6 +46,10 @@ class PosterNotificationListener : NotificationListenerService() {
         const val TAG = "PosterNotification"
         const val TELEGRAM_PACKAGE_NAME = "org.telegram.messenger"
         const val URL_REGX = "https://"
+        const val DESCRIPTION = "meta[name= description]"
+        const val TITLE = "meta[name= title]"
+        const val CONTENT = "content"
+        const val affiliateId = "shashkr-21" //amazon
     }
 
     override fun onCreate() {
@@ -62,31 +67,10 @@ class PosterNotificationListener : NotificationListenerService() {
     override fun onListenerConnected() {
         super.onListenerConnected()
         Log.d(TAG, "NotificationListener onListenerConnected")
-        createNotificationChannels()
-        startForeGroundService()
-    }
-
-    private fun createNotificationChannels() {
+        applicationContext.createNotificationChannels()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel1 = NotificationChannel(
-                CHANNEL_1_ID,
-                "Poster Channel",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-            channel1.description = "This is used for posting messages on telegram"
-            val manager = getSystemService(
-                NotificationManager::class.java
-            )
-            try {
-                manager?.createNotificationChannel(channel1)
-            } catch (e: Exception) {
-                Log.d(App.TAG, e.toString())
-            }
+            startForeGroundService()
         }
-    }
-
-    override fun onListenerDisconnected() {
-        super.onListenerDisconnected()
     }
 
     override fun onDestroy() {
@@ -97,6 +81,7 @@ class PosterNotificationListener : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
 
+        //for testing
         parseNotification(sbn)
     }
 
@@ -125,52 +110,105 @@ class PosterNotificationListener : NotificationListenerService() {
 
                 poster?.let {
 
-                    if (it.copy_links_only)
-                    {
-                         if (text!=null && !text.contains(URL_REGX))
-                         {
-                             copyAllowed = false
+                    if (it.copy_links_only ) {
+                        if (text != null && !text.contains(URL_REGX) or !(text.contains("amzn.to") or text.contains("amazon.in"))) {
+                            copyAllowed = false
+                        }
 
-                         }
-
-                        Log.d(TAG, " copied Allowed$copyAllowed ")
+                        Log.d(TAG, " copied Allowed-$copyAllowed ")
                     }
 
                     if (copyAllowed && it.receiver_channel_name.contains(",")) {
 
                         for (name in it.receiver_channel_name.split(",")) {
-                            if (title.lowercase() == name.lowercase() && sbn.notification.`when` > lastMsgTimeStamp) {
+                            if (title.lowercase().trim() == name.lowercase()
+                                    .trim() && sbn.notification.`when` > lastMsgTimeStamp
+                            ) {
                                 //copy to clipboard
-                                text?.copyToClipboard(applicationContext)
+                                text?.copyToClipboard(applicationContext,it.excludeWords)
+                                //convert to affiliate link
+                                convertToAfLink(it,text)
                                 lastMsgTimeStamp = sbn.notification.`when`
-                                Log.d(
-                                    TAG,
-                                    "Comma copied $text , timestamp:${sbn.notification.`when`}, title=$title"
-                                )
-                                return@let
+//                                Log.d(
+//                                    TAG,
+//                                    "Comma copied $text , timestamp:${sbn.notification.`when`}, title=$title"
+//                                )
+                                return
                             }
                         }
 
 
                     } else {
 
-                        if (copyAllowed && title.lowercase() == it.receiver_channel_name.lowercase() && sbn.notification.`when` > lastMsgTimeStamp) {
+                        if (copyAllowed && title.lowercase()
+                                .trim() == it.receiver_channel_name.lowercase()
+                                .trim() && sbn.notification.`when` > lastMsgTimeStamp
+                        ) {
                             //copy to clipboard
-                            text?.copyToClipboard(applicationContext)
+                            text?.copyToClipboard(applicationContext,it.excludeWords)
+                            //convert to affiliate link
+                            convertToAfLink(it,text)
                             lastMsgTimeStamp = sbn.notification.`when`
-                            Log.d(
-                                TAG,
-                                "copied $text , timestamp:${sbn.notification.`when`}, title=$title"
-                            )
+//                            Log.d(
+//                                TAG,
+//                                "copied $text , timestamp:${sbn.notification.`when`}, title=$title"
+//                            )
 
-                            return@let
+                            return
                         }
                     }
-
-
                 }
             }
         }
+    }
+
+    private fun convertToAfLink(poster:Poster,text: String?) {
+
+        //If in the setting convert affiliate is false
+        if (!poster.convert_affiliate){
+            return
+        }
+        // if text is null
+        if (text == null) {
+            return
+        }
+
+        var exclude = false
+
+        for(word in poster.excludeWords.split(",")){
+            if (text.toString().lowercase().contains(word.lowercase()))
+            {
+                exclude = true
+                return
+            }
+        }
+
+        //Return if excluded word found in content
+        if (exclude) return
+
+
+        Thread {
+
+            val urls: List<String> = text.extractUrls()
+            var replacedText:String = text
+
+            for (u in urls) {
+                try {
+                    var originalUrl = Jsoup.connect(u).execute().url().toString()
+
+                    val baseUrl = originalUrl.split("tag=")[0]
+                    originalUrl = baseUrl+"tag="+affiliateId
+
+                   replacedText =  replacedText.replace(u, originalUrl, ignoreCase = true)
+                    Log.d(TAG,"OriginalUrl=$originalUrl , Old Url = $u")
+                } catch (e: Exception) {
+                    Log.d(TAG, e.message.toString())
+                }
+            }
+            Log.d(TAG, replacedText)
+            postMessage(replacedText, "postTitle")
+
+        }.start()
     }
 
 
@@ -197,4 +235,25 @@ class PosterNotificationListener : NotificationListenerService() {
             Log.d(TAG, "foreground not started.${e.message}")
         }
     }
+
+
+    private fun postMessage(originalUrl: String, postTitle: String) {
+        scope!!.launch {
+
+            val v = repository.postMessage(
+                chatId = poster!!.receiver_channel_chat_id,
+                message = originalUrl
+            )
+            when (v) {
+                is Resource.Failure -> {
+                    Log.d(TAG, "Failed-${v.message}")
+                }
+                Resource.Loading -> TODO()
+                is Resource.Success -> Log.d(TAG, "Success")
+            }
+
+        }
+    }
+
+
 }

@@ -26,6 +26,8 @@ object UserPreferences {
     private val KEY_RECEIVER_CHANNEL_ID = stringPreferencesKey("KEY_RECEIVER_CHANNEL_ID")
     private val KEY_RECEIVER_CHANNEL_API = stringPreferencesKey("KEY_RECEIVER_API")
     private val KEY_RECEIVER_CHANNEL_CHAT_ID = stringPreferencesKey("KEY_RECEIVER_CHANNEL_CHAT_ID")
+    private val KEY_CONVERT_AFFILIATE = booleanPreferencesKey("KEY_CONVERT_AFFILIATE")
+    private val KEY_EXCLUDE_WORDS = stringPreferencesKey("KEY_EXCLUDE_WORDS")
 
 
     /**set current logged in user details in datastore*/
@@ -35,6 +37,8 @@ object UserPreferences {
             edit { it[KEY_RECEIVER_CHANNEL_ID] = poser.receiver_channel_name}
             edit { it[KEY_RECEIVER_CHANNEL_API] = poser.receiver_channel_api_key}
             edit { it[KEY_RECEIVER_CHANNEL_CHAT_ID] = poser.receiver_channel_chat_id }
+            edit { it[KEY_CONVERT_AFFILIATE] = poser.convert_affiliate }
+            edit { it[KEY_EXCLUDE_WORDS] = poser.excludeWords }
         }
     }
 
@@ -46,12 +50,17 @@ object UserPreferences {
         val receiverChannelApi = if (it[KEY_RECEIVER_CHANNEL_API] != null) it[KEY_RECEIVER_CHANNEL_API]!! else "receiverChannelApi"
         val receiverChannelChatId =
             if (it[KEY_RECEIVER_CHANNEL_CHAT_ID] != null) it[KEY_RECEIVER_CHANNEL_CHAT_ID]!! else "receiverChannelChatId"
+        val convertAffiliate =
+            if (it[KEY_CONVERT_AFFILIATE] != null) it[KEY_CONVERT_AFFILIATE]!! else false
+        val excludeWords =    if (it[KEY_EXCLUDE_WORDS] != null) it[KEY_EXCLUDE_WORDS]!! else ""
 
         Poster(
             copy_links_only = copyLinksOnly,
             receiver_channel_name = receiverChannelId,
             receiver_channel_api_key = receiverChannelApi,
             receiver_channel_chat_id = receiverChannelChatId,
+            excludeWords = excludeWords,
+            convert_affiliate = convertAffiliate
         )
     }
 
@@ -67,5 +76,17 @@ object UserPreferences {
             edit { it[KEY_COPY_LINKS_ONLY] = copyLinksOnly}
              }
         }
+
+    suspend fun saveConvertAffiliate(mContext: Context, convertAffiliate: Boolean) {
+        mContext.userDatastore.apply {
+            edit { it[KEY_CONVERT_AFFILIATE] = convertAffiliate}
+        }
+    }
+
+    suspend fun saveExcludeWords(mContext: Context, exclude: String) {
+        mContext.userDatastore.apply {
+            edit { it[KEY_EXCLUDE_WORDS] = exclude}
+        }
+    }
 
 }

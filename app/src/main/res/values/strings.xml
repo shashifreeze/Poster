@@ -11,7 +11,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="sender_channel_id">Sender Channel Id</string>
-    <string name="receiver_channel_name">Receiver Channel Name</string>
+    <string name="receiver_channel_name">From Channel</string>
     <string name="receiver_channel_api_key">Receiver Channel Api Key</string>
     <string name="receiver_channel_chat_id">Receiver Channel Chat Id</string>
     <string name="submit">Submit</string>
@@ -28,4 +28,6 @@
     <string name="telegram_package">org.telegram.messenger</string>
     <string name="restart">Restart</string>
     <string name="copy_links_only">Copy links only</string>
+    <string name="convert_affiliate">Convert Affiliate and Post to channel</string>
+    <string name="exclude_word">Exclude Word</string>
 </resources>

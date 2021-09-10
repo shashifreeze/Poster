@@ -75,7 +75,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val data =
             "Saved Data:\nCopy links only = ${it.copy_links_only}\nReceiver Channel Name = ${it.receiver_channel_name}\nReceiver Channel api key = ${it.receiver_channel_api_key}\nReceiver Channel Chat id = ${it.receiver_channel_chat_id}"
         binding.resultTV.text = data
-        binding.copyLinksOnly.isChecked = it.copy_links_only
+        binding.copyLinksOnlyCB.isChecked = it.copy_links_only
+        binding.convertAffiliateCB.isChecked = it.convert_affiliate
+        binding.excludeWord.setText(it.excludeWords)
+        binding.receiverChannelName.setText(it.receiver_channel_name)
+        binding.receiverChannelChatId.setText(it.receiver_channel_chat_id)
     }
 
     private fun clickListeners() {
@@ -88,9 +92,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             openChannel()
         }
 
-        binding.copyLinksOnly.setOnCheckedChangeListener { _, isChecked ->
+        binding.copyLinksOnlyCB.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveCopyLinksOnly(isChecked)
         }
+
+        binding.convertAffiliateCB.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.saveConvertAffiliate(isChecked)
+        }
+
     }
 
     private fun openChannel() {
@@ -115,12 +124,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 return
             }
 
+            if (receiverChannelChatId.validateEmpty("receiverChannelChatId")) {
+                return
+            }
+
             //all validation passed
             viewModel.savePosterData(
-                copyLinksOnly.isChecked,
+                copyLinksOnlyCB.isChecked,
                 receiverChannelName.text.toString(),
                 "",
-                ""
+                receiverChannelChatId.text.toString(),
+                excludeWords = excludeWord.text.toString(),
+                convertAffiliate = convertAffiliateCB.isChecked
             )
         }
     }

@@ -23,18 +23,35 @@ class HomeRepository @Inject constructor(private val mContext: Context, api: Hom
         copy_links_only: Boolean,
         receiverChannelName: String,
         receiverChannelApiKey: String,
-        receiverChannelChatId: String
+        receiverChannelChatId: String,
+        excludeWords: String,
+        convertAffiliate: Boolean
     ) = withContext(IO) {
 
         val poster =
-            Poster(copy_links_only, receiverChannelName, receiverChannelApiKey, receiverChannelChatId)
+            Poster(
+                copy_links_only,
+                receiverChannelName,
+                receiverChannelApiKey,
+                receiverChannelChatId,
+                convert_affiliate = convertAffiliate,
+                excludeWords = excludeWords
+            )
 
         UserPreferences.setPosterData(mContext, poster)
     }
 
-    suspend fun saveCopyLinksOnly(copy_links_only:Boolean) =  withContext(IO){
+    suspend fun saveCopyLinksOnly(copy_links_only: Boolean) = withContext(IO) {
 
         UserPreferences.saveCopyLinksOnly(mContext, copy_links_only)
+    }
+
+    suspend fun saveConvertAffiliate(checked: Boolean) {
+        UserPreferences.saveConvertAffiliate(mContext, checked)
+    }
+
+    suspend fun saveExcludeWords(exclude: String) {
+        UserPreferences.saveExcludeWords(mContext, exclude)
     }
 
 }

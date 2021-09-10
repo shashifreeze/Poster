@@ -16,10 +16,10 @@ import javax.inject.Singleton
 @Singleton
 class ServiceRepository @Inject constructor(private val posterApi: PosterApi):BaseRepository() {
 
-//    suspend fun postMessage(poster:Poster,message:String) = withContext(IO)
-//    {
-//        posterApi.postMessage()
-//    }
+    suspend fun postMessage(message:String, chatId:String) = withContext(IO)
+    {
 
+        safeCall { posterApi.postMessage(message = message, chatId = chatId)  }
+    }
 
 }
